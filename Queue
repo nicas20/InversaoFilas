@@ -1,0 +1,118 @@
+package queue;
+
+import stack.Node;
+
+public class Queue<T> {
+
+    private Node<T> head;
+    private Node<T> tail;
+    private int size;
+    
+    public void enqueue(T data) {
+        Node<T> tmp = new Node<T>();
+        tmp.setValue(data);
+        if(this.isEmpty()) {
+            this.head = tmp;
+        } else {
+            this.tail.setNext(tmp);
+        }
+        this.tail = tmp;
+        this.size ++;
+    }
+    
+    public T dequeue() throws EmptyQueueException {
+        if(this.isEmpty()) {
+            throw new EmptyQueueException();
+        }
+        T aux = this.head.getValue();
+        this.head = this.head.getNext();
+        if(this.head == null) {
+            this.tail = null;
+        }
+        this.size --;
+        return aux;
+    }
+    
+    public int size() {
+        return this.size;
+    }
+    
+    public boolean isEmpty() {
+        return this.head == null;
+    }
+    
+    public T head() throws EmptyQueueException {
+        if(this.isEmpty()) {
+            throw new EmptyQueueException();
+        }
+        return this.head.getValue();
+    }
+    
+    public T tail() throws EmptyQueueException {
+        if(this.isEmpty()) {
+            throw new EmptyQueueException();
+        }
+        return this.tail.getValue();
+    }
+    
+    @Override
+    public String toString() {
+        String out = "head -> [";
+        Node<T> aux = this.head;
+        while(aux != null) {
+            out += aux.getValue();
+            out += (aux.getNext() != null ? ", " : "");
+            aux = aux.getNext();
+        }
+        return out + "] <- tail";
+    }
+    
+    public void reverse() throws EmptyQueueException {
+        if (isEmpty()) {
+            throw new EmptyQueueException();
+        }
+
+        Node<T> prev = null;
+        Node<T> current = head;
+        Node<T> next = null;
+
+        while (current != null) {
+            next = current.getNext();
+            current.setNext(prev);
+            prev = current;
+            current = next;
+        }
+
+        tail = head;
+        head = prev;
+    }
+
+    public static void main(String[] args) {
+        Queue<String> q = new Queue<String>();
+        q.enqueue("a");
+        System.out.println(q.toString());
+        q.enqueue("b");
+        System.out.println(q.toString());
+        q.enqueue("c");
+        System.out.println(q.toString());
+
+        try {
+            System.out.println(q.dequeue());
+            System.out.println(q.dequeue());
+            System.out.println(q.dequeue());
+        } catch (EmptyQueueException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            q.enqueue("d");
+            q.enqueue("e");
+            q.enqueue("f");
+            System.out.println(q.toString());
+            q.reverse();
+            System.out.println(q.toString());
+        } catch (EmptyQueueException e) {
+            e.printStackTrace();
+        }
+    }
+}
